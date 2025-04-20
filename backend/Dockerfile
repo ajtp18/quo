@@ -20,7 +20,8 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false
 
 # Instalar dependencias
-RUN poetry install --no-dev --no-interaction --no-ansi
+RUN poetry lock
+RUN poetry install --no-interaction --no-ansi --no-root
 
 # Copiar el código de la aplicación
 COPY . .
@@ -29,4 +30,4 @@ COPY . .
 EXPOSE 8000
 
 # Comando para ejecutar la aplicación
-CMD ["poetry", "run", "gunicorn", "app.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"] 
+CMD ["poetry", "run", "gunicorn", "app.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]

@@ -40,6 +40,8 @@
             :subtitle="item.type"
             :title="item.name"
             :disabled="isInstitutionUnavailable(item.name)"
+            @click="onInstitutionClick(item)"
+            :class="{ 'cursor-pointer': !isInstitutionUnavailable(item.name) }"
         >
             <template v-slot:prepend>
                 <v-avatar>
@@ -51,12 +53,11 @@
             </template>
 
             <template v-slot:append>
-                <v-btn
-                    icon="mdi-information"
-                    variant="text"
-                    @click="onInstitutionClick(item)"
+                <v-icon
                     :color="isInstitutionUnavailable(item.name) ? 'error' : 'primary'"
-                ></v-btn>
+                >
+                    {{ isInstitutionUnavailable(item.name) ? 'mdi-alert-circle' : 'mdi-chevron-right' }}
+                </v-icon>
             </template>
 
             <template v-if="isInstitutionUnavailable(item.name)">

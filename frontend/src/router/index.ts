@@ -1,7 +1,5 @@
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
-import AccountsView from '@/views/AccountsView.vue'
-import TransactionsView from '@/views/TransactionsView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -25,11 +23,11 @@ const router = createRouter({
     },
     {
       path: '/banks/:linkId/accounts',
-      component: AccountsView,
+      component: () => import('@/views/AccountsView.vue'),
     },
     {
       path: '/banks/:linkId/accounts/:accountId/transactions',
-      component: TransactionsView,
+      component: () => import('@/views/TransactionsView.vue'),
     }
   ],
 })
