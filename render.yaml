@@ -1,0 +1,74 @@
+services:
+  # Backend API service
+  - type: web
+    name: banking-api
+    runtime: python
+    region: ohio
+    buildCommand: pip install poetry && poetry install
+    startCommand: poetry run gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 60
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: 7
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: banking-db
+          property: host
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: banking-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: banking-db
+          property: password
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: banking-db
+          property: database
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: banking-db
+          property: port
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: banking-cache
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: banking-cache
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: banking-cache
+          property: password
+
+  # Frontend static site
+  - type: web
+    name: banking-frontend
+    runtime: static
+    buildCommand: yarn install && yarn build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: banking-db
+    region: ohio
+    plan: free
+
+  - name: banking-cache
+    region: ohio
+    plan: free
